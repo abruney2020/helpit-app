@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelpIT - DeskFlow Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>HelpIT Registration Portal</h2>
+        
+        <form id="register-form">
+            <div class="input-group">
+                <label for="reg-username">Username</label>
+                <input type="text" id="reg-username" required>
+            </div>
+
+            <div class="input-group">
+                <label for="reg-password">Password</label>
+                <input type="password" id="reg-password" required>
+            </div>
+
+            <div class="input-group">
+                <label for="reg-role">Role</label>
+                <select id="reg-role" required>
+                    <option value="Employee">Employee</option>
+                    <option value="Technician">Technician</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="dept-key-group">
+                <label for="reg-dept-key">Technician Department Key (If Tech)</label>
+                <input type="password" id="reg-dept-key" placeholder="Enter TECH2026">
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

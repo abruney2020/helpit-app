@@ -2,6 +2,7 @@
 // By: Ajani 
 // Capstone project backend server setup w/ Express & PostgreSQL
 
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
@@ -15,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 // middlewarre
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public')); // serves html & css frontend files
+app.use(express.static(path.join(__dirname, 'public'))); // serves html & css frontend files
 
 // health check route 
 app.get('/api/health', async (req, res) => {
