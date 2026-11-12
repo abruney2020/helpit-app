@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const db = require('./db/index');
 const authRoutes = require('./routes/auth'); // imported our modular route listeners here!
+const userRoutes = require('./routes/users');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,6 +36,7 @@ app.get('/api/health', async (req, res) => {
 
 // mount our modular api route listeners
 app.use('/api', authRoutes);
+app.use('/api', userRoutes);
 
 // fire up the express server
 app.listen(PORT, () => {

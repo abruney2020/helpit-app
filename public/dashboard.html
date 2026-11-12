@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeskFlow - User Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 600px; margin: 40px auto; padding: 20px; background: #1e293b; border-radius: 8px; color: #f8fafc; font-family: sans-serif;">
+        <h2>DeskFlow Registered Accounts</h2>
+        <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 1.5rem;">
+            Live data pulled from PostgreSQL database via Express REST API.
+        </p>
+
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <button id="load-users-btn" style="background-color: #059669; color: white; padding: 0.75rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Refresh Accounts</button>
+            <a href="index.html" style="flex: 1; text-align: center; background-color: #334155; color: white; padding: 0.75rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Back to Register</a>
+        </div>
+
+        <ul id="users-list" style="list-style-type: none; padding: 0;">
+            <li style="color: #94a3b8; text-align: center; padding: 1rem;">Loading database records...</li>
+        </ul>
+    </div>
+
+    <script>
+        async function fetchUsers() {
+            const listElement = document.getElementById('users-list');
+            listElement.innerHTML = '<li style="color: #94a3b8; text-align: center; padding: 1rem;">Fetching accounts...</li>';
+
+            try {
+                const response = await fetch('/api/users');
+                const data = await response.json();
+
+                listElement.innerHTML = '';
+
+                if (response.ok && data.users && data.users.length > 0) {
+                    data.users.forEach(user => {
+                        const li = document.createElement('li');
+                        li.style.cssText = 'padding: 0.75rem; margin-bottom: 0.5rem; background-color: #0f172a; border: 1px solid #334155; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;';
+
+                        // Check role to change badge color (Technician gets distinct styling)
+                        const isTech = user.role_name === 'Technician';
+                        const badgeColor = isTech ? '#0284c7' : '#334155'; // Blue for Tech, Dark Slate for Employee
+
+                        li.innerHTML = `
+                            <div>
+                                <strong style="color: #38bdf8; font-size: 1rem;">${user.username}</strong>
+                                <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.2rem;">ID: ${user.id}</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <span style="background-color: ${badgeColor}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">${user.role_name}</span>
+                                <button onclick="deleteUser(${user.id})" style="background-color: #ef4444; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600;">Delete</button>
+                            </div>
+                        `;
+                        listElement.appendChild(li);
+                    });
+                } else {
+                    listElement.innerHTML = '<li style="color: #94a3b8; text-align: center; padding: 1rem;">No accounts registered in database yet.</li>';
+                }
+            } catch (err) {
+                console.error('Failed to load users:', err);
+                listElement.innerHTML = `<li style="color: #ef4444; text-align: center; padding: 1rem;">Error connecting to API server: ${err.message}</li>`;
+            }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Are you sure you want to delete this account?')) return;
+
+            try {
+                const response = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    fetchUsers();
+                } else {
+                    alert('Failed to delete account from database.');
+                }
+            } catch (err) {
+                console.error('Error deleting user:', err);
+            }
+        }
+
+        document.getElementById('load-users-btn').addEventListener('click', fetchUsers);
+        window.onload = fetchUsers;
+    </script>
+</body>
+</html>
